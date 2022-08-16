@@ -16,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
-        configService.get(Configs.database),
+        configService.get(Configs.database) || {},
     }),
     UsersModule,
     AuthModule,
