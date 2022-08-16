@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  database:
+    image: postgres
+    hostname: database
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env.postgres
+    volumes:
+      - projectsdata:/var/lib/postgresql/data
+volumes:
+  projectsdata:
+
