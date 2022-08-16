@@ -5,12 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
-import { AuthenticationRepository } from './repositories/auth.repository';
+import { AuthenticationEntity } from './entities';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
-    TypeOrmModule.forFeature([AuthenticationRepository]),
+    TypeOrmModule.forFeature([AuthenticationEntity]),
     PassportModule,
   ],
   controllers: [AuthController],

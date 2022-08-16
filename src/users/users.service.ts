@@ -1,12 +1,15 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { AuthenticationService } from 'src/auth/auth.service';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { UserRepository } from './repositories/user.repository';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private userRepository: UserRepository,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
     @Inject(forwardRef(() => AuthenticationService))
     private authenticationService: AuthenticationService,
   ) {}
@@ -15,7 +18,12 @@ export class UsersService {
     const authentication = await this.authenticationService.create(
       createUserDto,
     );
-    return this.userRepository.create({ ...createUserDto, authentication });
+    const user = this.userRepository.create({
+      ...createUserDto,
+      authentication,
+    });
+    await this.userRepository.save(user);
+    return user;
   }
 
   async findByEmail(email: string) {

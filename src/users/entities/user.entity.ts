@@ -19,6 +19,7 @@ export class UserEntity extends AbstractEntity {
     {
       eager: true,
       nullable: false,
+      cascade: true,
       onDelete: 'CASCADE',
     },
   )

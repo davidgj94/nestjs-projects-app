@@ -16,11 +16,12 @@ export const databaseConfig = registerAs(
     password: process.env.DATABASE_PASSWORD,
     host: process.env.DATABASE_HOST,
     port: parseInt(process.env.DATABASE_PORT || '', 10) || 5432,
-    entities: [__dirname + '../**/*.entity{.ts,.js}'],
-    migrations: [__dirname + '../migrations/*{.ts,.js}'],
+    entities: [__dirname + '/../**/*.entity.{ts,js}'],
+    migrations: [__dirname + '/../migrations/*.{ts,js}'],
     synchronize: true,
     migrationsRun: false,
     logging: true,
+    subscribers: [__dirname + '/../**/*.subscriber.{ts,js}'],
   }),
 );
 
