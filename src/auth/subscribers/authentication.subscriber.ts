@@ -27,11 +27,15 @@ export class AuthenticationSubscriber
     entity,
     databaseEntity,
   }: UpdateEvent<AuthenticationEntity>): Promise<void> {
-    if (entity?.password) {
-      const password = await AuthenticationProvider.generateHash(
+    if (
+      entity?.password &&
+      !(await AuthenticationProvider.compareHash(
+        entity.password,
+        databaseEntity.password,
+      ))
+    )
+      entity.password = await AuthenticationProvider.generateHash(
         entity.password,
       );
-      if (password !== databaseEntity?.password) entity.password = password;
-    }
   }
 }

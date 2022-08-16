@@ -26,10 +26,14 @@ export class AuthenticationService {
     password: string,
   ): Promise<Nullable<UserEntity>> {
     const user = await this.userService.findByEmail(email);
-    if (user)
-      return (await AuthenticationProvider.generateHash(password)) ===
-        user.authentication.password
+    console.log(user);
+    if (user) {
+      return (await AuthenticationProvider.compareHash(
+        password,
+        user.authentication.password,
+      ))
         ? user
         : null;
+    }
   }
 }

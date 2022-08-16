@@ -1,10 +1,10 @@
 import { AbstractEntity } from 'src/common/entities';
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { AuthenticationEntity } from 'src/auth/entities/auth.entity';
 
-@Entity({ name: 'User' })
+@Entity()
 export class UserEntity extends AbstractEntity {
-  @Column()
+  @Column({ unique: true })
   public email: string;
 
   @Column()
@@ -23,5 +23,6 @@ export class UserEntity extends AbstractEntity {
       onDelete: 'CASCADE',
     },
   )
+  @JoinColumn()
   public authentication: AuthenticationEntity;
 }

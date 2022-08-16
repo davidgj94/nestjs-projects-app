@@ -2,7 +2,7 @@ import { AbstractEntity } from 'src/common/entities';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { Column, Entity, OneToOne } from 'typeorm';
 
-@Entity({ name: 'Auth' })
+@Entity()
 export class AuthenticationEntity extends AbstractEntity {
   @Column()
   public password: string;
