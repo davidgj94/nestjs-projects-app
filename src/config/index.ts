@@ -1,5 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { DataSourceOptions } from 'typeorm';
+import { JwtModuleOptions } from '@nestjs/jwt';
 
 export enum Configs {
   database = 'database',
@@ -29,7 +30,10 @@ export const serverConfig = registerAs(Configs.server, () => ({
   port: parseInt(process.env.SERVER_PORT || '', 10) || 8000,
 }));
 
-export const jwtConfig = registerAs(Configs.jwt, () => ({
-  secret: process.env.JWT_SECRET,
-  expiresIn: process.env.JWT_EXPIRES_IN,
-}));
+export const jwtConfig = registerAs(
+  Configs.jwt,
+  (): JwtModuleOptions => ({
+    secret: process.env.JWT_SECRET,
+    signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
+  }),
+);

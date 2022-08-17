@@ -1,11 +1,13 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Nullable } from 'src/common/types';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { QueryRunner, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateAuthentionDto } from './dtos/create-authentication.dto';
 import { AuthenticationEntity } from './entities';
+import { JwtUser } from './interfaces';
 import { AuthenticationProvider } from './providers/auth.provider';
 
 @Injectable()
@@ -15,6 +17,7 @@ export class AuthenticationService {
     private authenticationReposiotry: Repository<AuthenticationEntity>,
     @Inject(forwardRef(() => UsersService))
     private userService: UsersService,
+    private jwtService: JwtService,
   ) {}
 
   async create(createAuthentionDto: CreateAuthentionDto) {
@@ -35,5 +38,10 @@ export class AuthenticationService {
         ? user
         : null;
     }
+  }
+
+  async login(user: UserEntity) {
+    const payload: JwtUser = { id: user.id, email: user.email };
+    return { acces_token: await this.jwtService.signAsync(payload) };
   }
 }
