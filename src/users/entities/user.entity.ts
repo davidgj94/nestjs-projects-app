@@ -1,7 +1,8 @@
 import { AbstractEntity } from 'src/common/entities';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { AuthenticationEntity } from 'src/auth/entities/auth.entity';
 import { Exclude, Expose } from 'class-transformer';
+import { ProjectEntity } from 'src/projects/entities/project.entity';
 
 @Entity()
 export class UserEntity extends AbstractEntity {

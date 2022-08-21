@@ -28,7 +28,7 @@ export class AuthenticationService {
   ): Promise<Nullable<AuthenticationEntity>> {
     const userAuth = await this.authenticationReposiotry.findOne({
       where: { email },
-      relations: ['user'],
+      relations: { user: true },
     });
 
     if (userAuth) {
