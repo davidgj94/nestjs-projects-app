@@ -1,18 +1,11 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  UseGuards,
-} from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { RequiredRole } from 'src/auth/decorators/role.decorator';
 import { JwtUser } from 'src/auth/types';
 import { User } from 'src/common/decorators';
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -22,6 +15,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @RequiredRole('ADMIN')
   async find(@Param('id', ParseUUIDPipe) userId: string): Promise<UserEntity> {
     return await this.usersService.findByIdOrThrow(userId);
   }
