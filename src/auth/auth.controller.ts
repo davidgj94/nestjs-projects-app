@@ -8,8 +8,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthenticationService) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   async login(@User() userAuth: AuthenticationEntity) {
     return this.authService.login(userAuth);
   }

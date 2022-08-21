@@ -34,6 +34,8 @@ export const jwtConfig = registerAs(
   Configs.jwt,
   (): JwtModuleOptions => ({
     secret: process.env.JWT_SECRET,
-    signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
+    signOptions: {
+      expiresIn: parseInt(process.env.JWT_EXPIRES_IN || '', 10) || 3600,
+    },
   }),
 );

@@ -43,6 +43,8 @@ export class AuthenticationService {
 
   async login(userAuth: AuthenticationEntity) {
     const payload: JwtUser = { id: userAuth.user.id, role: userAuth.role };
-    return { acces_token: await this.jwtService.signAsync(payload) };
+    return {
+      acces_token: await this.jwtService.signAsync(payload),
+    };
   }
 }
