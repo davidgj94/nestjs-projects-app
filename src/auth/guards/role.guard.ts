@@ -22,7 +22,7 @@ export class RolesGuard implements CanActivate {
     if (!requiredRole) return true;
     const { user } = context.switchToHttp().getRequest();
     return (
-      Roles.findIndex((el) => el === requiredRole) >
+      Roles.findIndex((el) => el === requiredRole) >=
       Roles.findIndex((el) => el === (user as JwtUser).role)
     );
   }

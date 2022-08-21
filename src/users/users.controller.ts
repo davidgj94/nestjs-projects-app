@@ -6,6 +6,7 @@ import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 @Controller('users')
+@RequiredRole('USER')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
