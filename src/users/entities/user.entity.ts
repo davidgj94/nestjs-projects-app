@@ -1,12 +1,10 @@
 import { AbstractEntity } from 'src/common/entities';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { AuthenticationEntity } from 'src/auth/entities/auth.entity';
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity()
 export class UserEntity extends AbstractEntity {
-  @Column({ unique: true })
-  public email: string;
-
   @Column()
   public firstName: string;
 
@@ -24,5 +22,11 @@ export class UserEntity extends AbstractEntity {
     },
   )
   @JoinColumn()
+  @Exclude()
   public authentication: AuthenticationEntity;
+
+  @Expose()
+  public get email() {
+    return this.authentication.email;
+  }
 }

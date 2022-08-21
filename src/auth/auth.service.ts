@@ -15,8 +15,6 @@ export class AuthenticationService {
   constructor(
     @InjectRepository(AuthenticationEntity)
     private authenticationReposiotry: Repository<AuthenticationEntity>,
-    @Inject(forwardRef(() => UsersService))
-    private userService: UsersService,
     private jwtService: JwtService,
   ) {}
 
@@ -27,21 +25,24 @@ export class AuthenticationService {
   async validateUser(
     email: string,
     password: string,
-  ): Promise<Nullable<UserEntity>> {
-    const user = await this.userService.findByEmail(email);
-    console.log(user);
-    if (user) {
+  ): Promise<Nullable<AuthenticationEntity>> {
+    const userAuth = await this.authenticationReposiotry.findOne({
+      where: { email },
+      relations: ['user'],
+    });
+
+    if (userAuth) {
       return (await AuthenticationProvider.compareHash(
         password,
-        user.authentication.password,
+        userAuth.password,
       ))
-        ? user
+        ? userAuth
         : null;
     }
   }
 
-  async login(user: UserEntity) {
-    const payload: JwtUser = { id: user.id, email: user.email };
+  async login(userAuth: AuthenticationEntity) {
+    const payload: JwtUser = { id: userAuth.user.id, role: userAuth.role };
     return { acces_token: await this.jwtService.signAsync(payload) };
   }
 }

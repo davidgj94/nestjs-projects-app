@@ -1,4 +1,6 @@
+import { Roles } from './roles.type';
+
 export interface JwtUser {
   id: string;
-  email: string;
+  role: Roles;
 }

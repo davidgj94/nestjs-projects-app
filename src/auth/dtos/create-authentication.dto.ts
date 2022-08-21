@@ -6,4 +6,9 @@ export class CreateAuthentionDto {
   @IsNotEmpty()
   @ApiProperty()
   readonly password: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  readonly email: string;
 }

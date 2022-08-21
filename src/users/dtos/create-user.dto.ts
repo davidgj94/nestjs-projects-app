@@ -6,11 +6,6 @@ export class CreateUserDto extends CreateAuthentionDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  readonly email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
   readonly firstName: string;
 
   @IsString()

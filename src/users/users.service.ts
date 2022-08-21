@@ -1,16 +1,16 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthenticationService } from 'src/auth/auth.service';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { UserNotFoundException } from './exceptions/user-not-found.exception';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-    @Inject(forwardRef(() => AuthenticationService))
     private authenticationService: AuthenticationService,
   ) {}
 
@@ -26,9 +26,9 @@ export class UsersService {
     return user;
   }
 
-  async findByEmail(email: string) {
-    return this.userRepository.findOne({
-      where: { email },
-    });
+  async findByIdOrThrow(userId: string): Promise<UserEntity> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (user) return user;
+    throw new UserNotFoundException(userId);
   }
 }
