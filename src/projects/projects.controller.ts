@@ -1,15 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { JwtUser } from 'src/auth/types';
+import { User } from 'src/common/decorators';
+import { RequiredRole } from 'src/auth/decorators/role.decorator';
 
 @Controller('projects')
+@RequiredRole('ADMIN')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+  async create(
+    @Body() createProjectDto: CreateProjectDto,
+    @User() { id: createdBy }: JwtUser,
+  ) {
+    return await this.projectsService.create(createProjectDto, createdBy);
   }
 
   @Get()

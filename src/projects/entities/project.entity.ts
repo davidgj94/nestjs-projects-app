@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { AbstractEntity } from 'src/common/entities';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
@@ -11,6 +12,7 @@ export class ProjectEntity extends AbstractEntity {
     nullable: false,
     eager: true,
   })
+  @Transform(({ value }) => (value as UserEntity).id)
   public createdBy: UserEntity;
 
   @ManyToMany(() => UserEntity, {
