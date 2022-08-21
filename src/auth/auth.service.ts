@@ -7,7 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateAuthentionDto } from './dtos/create-authentication.dto';
 import { AuthenticationEntity } from './entities';
-import { JwtUser } from './interfaces';
+import { JwtUser } from './types';
 import { AuthenticationProvider } from './providers/auth.provider';
 
 @Injectable()
