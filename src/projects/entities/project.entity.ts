@@ -32,10 +32,7 @@ export class ProjectEntity extends AbstractEntity {
     eager: true,
     cascade: true,
   })
-  @JoinTable({
-    joinColumn: { name: 'userId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'roleId' },
-  })
+  @JoinTable()
   @Exclude()
   public participants: UserEntity[];
 
