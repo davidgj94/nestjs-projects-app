@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -13,6 +14,7 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtUser } from 'src/auth/types';
 import { User } from 'src/common/decorators';
 import { RequiredRole } from 'src/auth/decorators/role.decorator';
+import { Public } from 'src/auth/decorators/is-public.decorator';
 
 @Controller('projects')
 @RequiredRole('ADMIN')
@@ -28,13 +30,18 @@ export class ProjectsController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.projectsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
+  @Post(':projectId/participants/:userId')
+  @Public()
+  findOne(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    return this.projectsService.addParticipant(projectId, userId);
   }
 
   @Patch(':id')
