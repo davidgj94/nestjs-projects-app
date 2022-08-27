@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
@@ -23,8 +23,18 @@ export class ProjectsService {
       ...createProjectDto,
       createdById: createdBy,
     });
-    await this.projectsRepository.save(project);
-    return project;
+    return await this.projectsRepository.save(project);
+  }
+
+  async update(
+    projectId: string,
+    updates: UpdateProjectDto,
+  ): Promise<ProjectEntity> {
+    const project = await this.findByIdOrThrow(projectId);
+    return this.projectsRepository.save({
+      ...project,
+      updates,
+    });
   }
 
   async findAll() {
@@ -35,6 +45,11 @@ export class ProjectsService {
     const project = await this.projectsRepository.findOneBy({ id: projectId });
     if (!project) throw new ProjectNotFoundException(projectId);
     return project;
+  }
+
+  async remove(projectId: string): Promise<ProjectEntity> {
+    const project = await this.findByIdOrThrow(projectId);
+    return this.projectsRepository.remove(project);
   }
 
   async addParticipant(
@@ -50,15 +65,14 @@ export class ProjectsService {
     return project;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
-  }
-
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async deleteParticipant(
+    projectId: string,
+    userId: string,
+  ): Promise<ProjectEntity> {
+    const project = await this.findByIdOrThrow(projectId);
+    project.participants = project.participants.filter(
+      ({ id }) => id !== userId,
+    );
+    return this.projectsRepository.save(project);
   }
 }

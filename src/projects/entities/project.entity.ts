@@ -16,6 +16,9 @@ export class ProjectEntity extends AbstractEntity {
   @Column({ unique: true })
   public name: string;
 
+  @Column()
+  public description: string;
+
   @ManyToOne(() => UserEntity, {
     nullable: false,
     eager: true,
@@ -38,6 +41,4 @@ export class ProjectEntity extends AbstractEntity {
 
   @RelationId((project: ProjectEntity) => project.participants)
   public participantsIds: string[];
-
-  private aa: string;
 }
