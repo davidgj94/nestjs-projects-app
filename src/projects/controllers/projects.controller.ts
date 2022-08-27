@@ -9,18 +9,22 @@ import {
   ParseUUIDPipe,
   Put,
 } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import { ProjectsService } from '../services/projects.service';
+import { CreateProjectDto } from '../dto/create-project.dto';
+import { UpdateProjectDto } from '../dto/update-project.dto';
 import { JwtUser } from 'src/auth/types';
 import { User } from 'src/common/decorators';
 import { RequiredRole } from 'src/auth/decorators/role.decorator';
 import { Public } from 'src/auth/decorators/is-public.decorator';
+import { TasksService } from '../services/tasks.service';
 
 @Controller('projects')
 @RequiredRole('ADMIN')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(
+    private readonly projectsService: ProjectsService,
+    private readonly taskService: TasksService,
+  ) {}
 
   @Post()
   async create(
@@ -45,6 +49,7 @@ export class ProjectsController {
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.findByIdOrThrow(id);
   }
@@ -68,5 +73,17 @@ export class ProjectsController {
     @Param('userId', ParseUUIDPipe) userId: string,
   ) {
     return this.projectsService.deleteParticipant(projectId, userId);
+  }
+
+  @Get(':id/participants')
+  @RequiredRole('USER')
+  async findProjectParcipants(@Param('id', ParseUUIDPipe) id: string) {
+    return (await this.projectsService.findByIdOrThrow(id)).participants;
+  }
+
+  @Get(':id/taks')
+  @RequiredRole('USER')
+  findProjectTasks(@Param('id', ParseUUIDPipe) id: string) {
+    return this.taskService.findByProject(id);
   }
 }

@@ -6,11 +6,11 @@ async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const userService = app.get(UsersService);
   const user = await userService.create({
-    email: 'davidg2j@gmail.com',
+    email: 'davidgj2@gmail.com',
     firstName: 'David',
     lastName: 'Gallardo',
     password: 'asdf123',
-    role: 'ADMIN',
+    role: 'USER',
   });
   console.log(user);
 }

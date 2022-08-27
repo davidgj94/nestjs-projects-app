@@ -16,7 +16,7 @@ export class ProjectEntity extends AbstractEntity {
   @Column({ unique: true })
   public name: string;
 
-  @Column()
+  @Column({ nullable: true })
   public description: string;
 
   @ManyToOne(() => UserEntity, {
