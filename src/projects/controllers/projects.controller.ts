@@ -19,7 +19,10 @@ import { RequiredRole } from 'src/auth/decorators/role.decorator';
 import { Public } from 'src/auth/decorators/is-public.decorator';
 import { TasksService } from '../services/tasks.service';
 import { PageOptionsDto } from 'src/common/dtos/page-options.dto';
+import { ProjectDto } from '../dto/project.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Projects')
 @Controller('projects')
 @RequiredRole('ADMIN')
 export class ProjectsController {
@@ -32,16 +35,20 @@ export class ProjectsController {
   async create(
     @Body() createProjectDto: CreateProjectDto,
     @User() { id: createdBy }: JwtUser,
-  ) {
-    return await this.projectsService.create(createProjectDto, createdBy);
+  ): Promise<ProjectDto> {
+    return this.projectsService
+      .create(createProjectDto, createdBy)
+      .then(ProjectDto.fromEntity);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProjectDto: UpdateProjectDto,
-  ) {
-    return this.projectsService.update(id, updateProjectDto);
+  ): Promise<ProjectDto> {
+    return this.projectsService
+      .update(id, updateProjectDto)
+      .then(ProjectDto.fromEntity);
   }
 
   @Get()
@@ -52,13 +59,13 @@ export class ProjectsController {
 
   @Get(':id')
   @Public()
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectsService.findByIdOrThrow(id);
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ProjectDto> {
+    return this.projectsService.findByIdOrThrow(id).then(ProjectDto.fromEntity);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectsService.remove(id);
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<ProjectDto> {
+    return this.projectsService.remove(id).then(ProjectDto.fromEntity);
   }
 
   @Put(':projectId/participants/:userId')

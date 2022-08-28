@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { AbstractDto } from 'src/common/dtos';
-import { AbstractEntity } from 'src/common/entities';
 import { TaskEntity } from '../entities/task.entity';
 
 export class TaskDto
