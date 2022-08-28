@@ -19,6 +19,7 @@ import { JwtUser } from 'src/auth/types';
 import { TaskPageOptionsDto } from '../dto/page-options-task.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { TaskDto } from '../dto/task.dto';
+import { UserDto } from 'src/users/dtos/user.dto';
 
 @ApiTags('Tasks')
 @ApiBearerAuth()
@@ -80,7 +81,10 @@ export class TasksController {
   }
 
   @Get(':id/asignees')
-  async findTaskAsignees(@Param('id', ParseUUIDPipe) id: string) {
-    return (await this.tasksService.findByIdOrThrow(id)).asignees;
+  async findTaskAsignees(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<UserDto[]> {
+    const users = (await this.tasksService.findByIdOrThrow(id)).asignees;
+    return users.map(UserDto.fromEntity);
   }
 }

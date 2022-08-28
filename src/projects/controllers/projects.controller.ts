@@ -19,6 +19,7 @@ import { RequiredRole } from 'src/auth/decorators/role.decorator';
 import { PageOptionsDto } from 'src/common/dtos/page-options.dto';
 import { ProjectDto } from '../dto/project.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UserDto } from 'src/users/dtos/user.dto';
 
 @ApiTags('Projects')
 @ApiBearerAuth()
@@ -104,7 +105,10 @@ export class ProjectsController {
    */
   @Get(':id/participants')
   @RequiredRole('USER')
-  async findProjectParcipants(@Param('id', ParseUUIDPipe) id: string) {
-    return (await this.projectsService.findByIdOrThrow(id)).participants;
+  async findProjectParcipants(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<UserDto[]> {
+    const users = (await this.projectsService.findByIdOrThrow(id)).participants;
+    return users.map(UserDto.fromEntity);
   }
 }
