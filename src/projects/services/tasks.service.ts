@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageMetaDto } from 'src/common/dtos/page-meta.dto';
-import { PageOptionsDto } from 'src/common/dtos/page-options.dto';
 import { PageDto } from 'src/common/dtos/page.dto';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
