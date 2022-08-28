@@ -1,8 +1,10 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import { AbstractEntity } from '../entities';
 
 export class AbstractDto {
   @ApiHideProperty()
+  @Exclude()
   isDto: true;
 
   @ApiProperty({ format: 'uuid' })
