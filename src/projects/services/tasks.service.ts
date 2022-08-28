@@ -67,10 +67,6 @@ export class TasksService {
     return this.taskRepository.remove(task);
   }
 
-  async findByProject(projectId: string): Promise<TaskEntity[]> {
-    return this.taskRepository.findBy({ projectId });
-  }
-
   async addAsignee(taskId: string, userId: string) {
     const task = await this.findByIdOrThrow(taskId);
     if (!task.asignees.find(({ id }) => id === userId)) {

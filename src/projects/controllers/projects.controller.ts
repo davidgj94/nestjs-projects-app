@@ -17,7 +17,6 @@ import { JwtUser } from 'src/auth/types';
 import { User } from 'src/common/decorators';
 import { RequiredRole } from 'src/auth/decorators/role.decorator';
 import { Public } from 'src/auth/decorators/is-public.decorator';
-import { TasksService } from '../services/tasks.service';
 import { PageOptionsDto } from 'src/common/dtos/page-options.dto';
 import { ProjectDto } from '../dto/project.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -26,10 +25,7 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('projects')
 @RequiredRole('ADMIN')
 export class ProjectsController {
-  constructor(
-    private readonly projectsService: ProjectsService,
-    private readonly taskService: TasksService,
-  ) {}
+  constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
   async create(
@@ -88,11 +84,5 @@ export class ProjectsController {
   @RequiredRole('USER')
   async findProjectParcipants(@Param('id', ParseUUIDPipe) id: string) {
     return (await this.projectsService.findByIdOrThrow(id)).participants;
-  }
-
-  @Get(':id/taks')
-  @RequiredRole('USER')
-  findProjectTasks(@Param('id', ParseUUIDPipe) id: string) {
-    return this.taskService.findByProject(id);
   }
 }

@@ -67,27 +67,20 @@ export class ProjectsService {
     return this.projectsRepository.remove(project);
   }
 
-  async addParticipant(
-    projectId: string,
-    userId: string,
-  ): Promise<ProjectEntity> {
+  async addParticipant(projectId: string, userId: string) {
     const project = await this.findByIdOrThrow(projectId);
     if (!project.participantsIds.includes(userId)) {
       const user = await this.userService.findByIdOrThrow(userId);
       project.participants.push(user);
       await this.projectsRepository.save(project);
     }
-    return project;
   }
 
-  async deleteParticipant(
-    projectId: string,
-    userId: string,
-  ): Promise<ProjectEntity> {
+  async deleteParticipant(projectId: string, userId: string) {
     const project = await this.findByIdOrThrow(projectId);
     project.participants = project.participants.filter(
       ({ id }) => id !== userId,
     );
-    return this.projectsRepository.save(project);
+    this.projectsRepository.save(project);
   }
 }
