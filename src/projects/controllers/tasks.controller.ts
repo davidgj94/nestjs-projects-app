@@ -17,18 +17,26 @@ import { RequiredRole } from 'src/auth/decorators/role.decorator';
 import { User } from 'src/common/decorators';
 import { JwtUser } from 'src/auth/types';
 import { TaskPageOptionsDto } from '../dto/page-options-task.dto';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { TaskDto } from '../dto/task.dto';
 
+@ApiTags('Tasks')
 @Controller('tasks')
 @RequiredRole('USER')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
+  @ApiCreatedResponse({
+    type: TaskDto,
+  })
   async create(
     @Body() createTaskDto: CreateTaskDto,
     @User() { id: userId }: JwtUser,
-  ) {
-    return this.tasksService.create(createTaskDto, userId);
+  ): Promise<TaskDto> {
+    return this.tasksService
+      .create(createTaskDto, userId)
+      .then(TaskDto.fromEntity);
   }
 
   @Get()
@@ -37,21 +45,21 @@ export class TasksController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.tasksService.findByIdOrThrow(id);
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<TaskDto> {
+    return this.tasksService.findByIdOrThrow(id).then(TaskDto.fromEntity);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTaskDto: UpdateTaskDto,
-  ) {
-    return this.tasksService.update(id, updateTaskDto);
+  ): Promise<TaskDto> {
+    return this.tasksService.update(id, updateTaskDto).then(TaskDto.fromEntity);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.tasksService.remove(id);
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<TaskDto> {
+    return this.tasksService.remove(id).then(TaskDto.fromEntity);
   }
 
   @Put(':taskId/asignees/:userId')

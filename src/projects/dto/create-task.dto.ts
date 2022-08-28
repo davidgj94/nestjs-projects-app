@@ -1,14 +1,8 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
+import { TaskDto } from './task.dto';
 
-export class CreateTaskDto {
-  @IsString()
-  @IsNotEmpty()
-  readonly name: string;
-
-  @IsString()
-  @IsOptional()
-  readonly description: string;
-
-  @IsUUID()
-  readonly projectId: string;
-}
+export class CreateTaskDto extends PickType(TaskDto, [
+  'name',
+  'description',
+  'projectId',
+]) {}
