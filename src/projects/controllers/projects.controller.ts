@@ -16,17 +16,20 @@ import { UpdateProjectDto } from '../dto/update-project.dto';
 import { JwtUser } from 'src/auth/types';
 import { User } from 'src/common/decorators';
 import { RequiredRole } from 'src/auth/decorators/role.decorator';
-import { Public } from 'src/auth/decorators/is-public.decorator';
 import { PageOptionsDto } from 'src/common/dtos/page-options.dto';
 import { ProjectDto } from '../dto/project.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Projects')
+@ApiBearerAuth()
 @Controller('projects')
 @RequiredRole('ADMIN')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
+  /**
+   * Create project
+   */
   @Post()
   async create(
     @Body() createProjectDto: CreateProjectDto,
@@ -37,6 +40,9 @@ export class ProjectsController {
       .then(ProjectDto.fromEntity);
   }
 
+  /**
+   * Update project
+   */
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -47,23 +53,33 @@ export class ProjectsController {
       .then(ProjectDto.fromEntity);
   }
 
+  /**
+   * Get all projects
+   */
   @Get()
-  @Public()
   findAll(@Query() pageOptionsDto: PageOptionsDto) {
     return this.projectsService.findAll(pageOptionsDto);
   }
 
+  /**
+   * Get project by id
+   */
   @Get(':id')
-  @Public()
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ProjectDto> {
     return this.projectsService.findByIdOrThrow(id).then(ProjectDto.fromEntity);
   }
 
+  /**
+   * Delete project
+   */
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<ProjectDto> {
     return this.projectsService.remove(id).then(ProjectDto.fromEntity);
   }
 
+  /**
+   * Add participants
+   */
   @Put(':projectId/participants/:userId')
   addParticipant(
     @Param('projectId', ParseUUIDPipe) projectId: string,
@@ -72,6 +88,9 @@ export class ProjectsController {
     return this.projectsService.addParticipant(projectId, userId);
   }
 
+  /**
+   * Delete participant
+   */
   @Delete(':projectId/participants/:userId')
   removeParticipant(
     @Param('projectId', ParseUUIDPipe) projectId: string,
@@ -80,6 +99,9 @@ export class ProjectsController {
     return this.projectsService.deleteParticipant(projectId, userId);
   }
 
+  /**
+   * Get all projects participants
+   */
   @Get(':id/participants')
   @RequiredRole('USER')
   async findProjectParcipants(@Param('id', ParseUUIDPipe) id: string) {

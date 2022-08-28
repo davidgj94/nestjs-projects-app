@@ -13,6 +13,7 @@ async function bootstrap() {
     .setDescription('The projects API description')
     .setVersion('1.0')
     .addTag('projects')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

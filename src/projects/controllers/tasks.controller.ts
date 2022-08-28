@@ -17,10 +17,11 @@ import { RequiredRole } from 'src/auth/decorators/role.decorator';
 import { User } from 'src/common/decorators';
 import { JwtUser } from 'src/auth/types';
 import { TaskPageOptionsDto } from '../dto/page-options-task.dto';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { TaskDto } from '../dto/task.dto';
 
 @ApiTags('Tasks')
+@ApiBearerAuth()
 @Controller('tasks')
 @RequiredRole('USER')
 export class TasksController {
