@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ProjectsService } from '../services/projects.service';
 import { CreateProjectDto } from '../dto/create-project.dto';
@@ -17,6 +18,7 @@ import { User } from 'src/common/decorators';
 import { RequiredRole } from 'src/auth/decorators/role.decorator';
 import { Public } from 'src/auth/decorators/is-public.decorator';
 import { TasksService } from '../services/tasks.service';
+import { PageOptionsDto } from 'src/common/dtos/page-options.dto';
 
 @Controller('projects')
 @RequiredRole('ADMIN')
@@ -44,8 +46,8 @@ export class ProjectsController {
 
   @Get()
   @Public()
-  findAll() {
-    return this.projectsService.findAll();
+  findAll(@Query() pageOptionsDto: PageOptionsDto) {
+    return this.projectsService.findAll(pageOptionsDto);
   }
 
   @Get(':id')

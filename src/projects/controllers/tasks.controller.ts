@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   Put,
+  Query,
 } from '@nestjs/common';
 import { TasksService } from '../services/tasks.service';
 import { CreateTaskDto } from '../dto/create-task.dto';
@@ -15,6 +16,7 @@ import { UpdateTaskDto } from '../dto/update-task.dto';
 import { RequiredRole } from 'src/auth/decorators/role.decorator';
 import { User } from 'src/common/decorators';
 import { JwtUser } from 'src/auth/types';
+import { TaskPageOptionsDto } from '../dto/page-options-task.dto';
 
 @Controller('tasks')
 @RequiredRole('USER')
@@ -30,8 +32,8 @@ export class TasksController {
   }
 
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  findAll(@Query() pageOptionsDto: TaskPageOptionsDto) {
+    return this.tasksService.findAll(pageOptionsDto);
   }
 
   @Get(':id')

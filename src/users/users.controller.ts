@@ -16,7 +16,6 @@ export class UsersController {
   }
 
   @Get(':id')
-  @RequiredRole('ADMIN')
   async find(@Param('id', ParseUUIDPipe) userId: string): Promise<UserEntity> {
     return await this.usersService.findByIdOrThrow(userId);
   }

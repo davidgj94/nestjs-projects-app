@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PageMetaDto } from 'src/common/dtos/page-meta.dto';
+import { PageOptionsDto } from 'src/common/dtos/page-options.dto';
+import { PageDto } from 'src/common/dtos/page.dto';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateProjectDto } from '../dto/create-project.dto';
@@ -37,8 +40,20 @@ export class ProjectsService {
     });
   }
 
-  async findAll() {
-    return this.projectsRepository.find();
+  async findAll(pageOptionsDto: PageOptionsDto) {
+    const queryBuilder = this.projectsRepository.createQueryBuilder('entity');
+
+    queryBuilder
+      .orderBy('entity.createdAt', pageOptionsDto.order)
+      .skip(pageOptionsDto.skip)
+      .take(pageOptionsDto.take);
+
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+    return new PageDto(entities, pageMetaDto);
   }
 
   async findByIdOrThrow(projectId: string): Promise<ProjectEntity> {

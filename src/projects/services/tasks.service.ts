@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PageMetaDto } from 'src/common/dtos/page-meta.dto';
+import { PageOptionsDto } from 'src/common/dtos/page-options.dto';
+import { PageDto } from 'src/common/dtos/page.dto';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateTaskDto } from '../dto/create-task.dto';
+import { TaskPageOptionsDto } from '../dto/page-options-task.dto';
 import { UpdateTaskDto } from '../dto/update-task.dto';
 import { TaskEntity } from '../entities/task.entity';
 import { TaskNotFoundException } from '../exception/task-not-found.exception';
@@ -29,8 +33,28 @@ export class TasksService {
     return task;
   }
 
-  findAll() {
-    return `This action returns all tasks`;
+  async findAll(pageOptionsDto: TaskPageOptionsDto) {
+    let queryBuilder = this.taskRepository.createQueryBuilder('entity');
+
+    const pageQueryParams = pageOptionsDto.query;
+    if (pageQueryParams)
+      Object.keys(pageQueryParams).forEach((key) => {
+        queryBuilder = queryBuilder.where(`entity.${key} = :${key}`, {
+          [key]: pageQueryParams[key],
+        });
+      });
+
+    queryBuilder
+      .orderBy('entity.createdAt', pageOptionsDto.order)
+      .skip(pageOptionsDto.skip)
+      .take(pageOptionsDto.take);
+
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+    return new PageDto(entities, pageMetaDto);
   }
 
   async update(taskId: string, updateTaskDto: UpdateTaskDto) {
