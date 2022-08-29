@@ -3,7 +3,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { databaseConfig, jwtConfig, serverConfig, Configs } from './config';
+import {
+  databaseConfig,
+  jwtConfig,
+  serverConfig,
+  Configs,
+  isDevEnv,
+} from './config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
@@ -16,6 +22,7 @@ import { ProjectsModule } from './projects/projects.module';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, jwtConfig, serverConfig],
+      expandVariables: !isDevEnv,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
