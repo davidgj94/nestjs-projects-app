@@ -67,6 +67,7 @@ export class ProjectsController {
    * Get project by id
    */
   @Get(':id')
+  @RequiredRole('USER')
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<ProjectDto> {
     return this.projectsService.findByIdOrThrow(id).then(ProjectDto.fromEntity);
   }
