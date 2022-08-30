@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ForbiddenAccessException } from 'src/auth/exceptions/forbiden-access.exception';
 import { PageMetaDto } from 'src/common/dtos/page-meta.dto';
 import { PageDto } from 'src/common/dtos/page.dto';
 import { UsersService } from 'src/users/users.service';
@@ -9,6 +10,7 @@ import { TaskPageOptionsDto } from '../dto/page-options-task.dto';
 import { UpdateTaskDto } from '../dto/update-task.dto';
 import { TaskEntity } from '../entities/task.entity';
 import { TaskNotFoundException } from '../exception/task-not-found.exception';
+import { ProjectsService } from './projects.service';
 
 @Injectable()
 export class TasksService {
@@ -16,12 +18,21 @@ export class TasksService {
     @InjectRepository(TaskEntity)
     private taskRepository: Repository<TaskEntity>,
     private userService: UsersService,
+    private projectService: ProjectsService,
   ) {}
+
+  async userIsProjectMemberOrThrow(projectId: string, userId: sring) {
+    const project = await this.projectService.findByIdOrThrow(projectId);
+    if (!project.participantsIds.includes(userId))
+      throw new ForbiddenAccessException(userId);
+  }
 
   async create(
     createTaskDto: CreateTaskDto,
     createdById: string,
   ): Promise<TaskEntity> {
+    await this.userIsProjectMemberOrThrow(createTaskDto.projectId, createdById);
+
     const task = this.taskRepository.create({ ...createTaskDto, createdById });
     return this.taskRepository.save(task);
   }
@@ -56,18 +67,21 @@ export class TasksService {
     return new PageDto(entities, pageMetaDto);
   }
 
-  async update(taskId: string, updateTaskDto: UpdateTaskDto) {
+  async update(taskId: string, updateTaskDto: UpdateTaskDto, userId: string) {
     const task = await this.findByIdOrThrow(taskId);
+    await this.userIsProjectMemberOrThrow(task.projectId, userId);
     return this.taskRepository.save({ ...task, ...updateTaskDto });
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
     const task = await this.findByIdOrThrow(id);
+    await this.userIsProjectMemberOrThrow(task.projectId, userId);
     return this.taskRepository.remove(task);
   }
 
   async addAsignee(taskId: string, userId: string) {
     const task = await this.findByIdOrThrow(taskId);
+    await this.userIsProjectMemberOrThrow(task.projectId, userId);
     if (!task.asignees.find(({ id }) => id === userId)) {
       const user = await this.userService.findByIdOrThrow(userId);
       task.asignees.push(user);
@@ -77,6 +91,7 @@ export class TasksService {
 
   async deleteAsignee(taskId: string, userId: string) {
     const task = await this.findByIdOrThrow(taskId);
+    await this.userIsProjectMemberOrThrow(task.projectId, userId);
     task.asignees = task.asignees.filter(({ id }) => id !== userId);
     await this.taskRepository.save(task);
   }
