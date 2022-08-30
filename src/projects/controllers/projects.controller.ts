@@ -58,6 +58,7 @@ export class ProjectsController {
    * Get all projects
    */
   @Get()
+  @RequiredRole('USER')
   findAll(@Query() pageOptionsDto: PageOptionsDto) {
     return this.projectsService.findAll(pageOptionsDto);
   }

@@ -9,6 +9,7 @@ import { CreateAuthentionDto } from './dtos/create-authentication.dto';
 import { AuthenticationEntity } from './entities';
 import { JwtUser } from './types';
 import { AuthenticationProvider } from './providers/auth.provider';
+import { Roles } from './types/roles.type';
 
 @Injectable()
 export class AuthenticationService {
@@ -42,7 +43,10 @@ export class AuthenticationService {
   }
 
   async login(userAuth: AuthenticationEntity) {
-    const payload: JwtUser = { id: userAuth.user.id, role: userAuth.role };
+    const payload: JwtUser = {
+      id: userAuth.user.id,
+      role: userAuth.role,
+    };
     return {
       acces_token: await this.jwtService.signAsync(payload),
     };

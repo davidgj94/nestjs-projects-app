@@ -81,6 +81,7 @@ export class ProjectsService {
     project.participants = project.participants.filter(
       ({ id }) => id !== userId,
     );
+    console.log(project.participants);
     this.projectsRepository.save(project);
   }
 }

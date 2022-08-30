@@ -5,7 +5,7 @@ import { AbstractEntity } from '../entities';
 export class AbstractDto {
   @ApiHideProperty()
   @Exclude()
-  isDto: true;
+  isDto = true;
 
   @ApiProperty({ format: 'uuid' })
   readonly id: string;
