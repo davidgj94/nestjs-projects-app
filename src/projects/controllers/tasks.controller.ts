@@ -55,13 +55,19 @@ export class TasksController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTaskDto: UpdateTaskDto,
+    @User() { id: userId }: JwtUser,
   ): Promise<TaskDto> {
-    return this.tasksService.update(id, updateTaskDto).then(TaskDto.fromEntity);
+    return this.tasksService
+      .update(id, updateTaskDto, userId)
+      .then(TaskDto.fromEntity);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string): Promise<TaskDto> {
-    return this.tasksService.remove(id).then(TaskDto.fromEntity);
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @User() { id: userId }: JwtUser,
+  ): Promise<TaskDto> {
+    return this.tasksService.remove(id, userId).then(TaskDto.fromEntity);
   }
 
   @Put(':taskId/asignees/:userId')

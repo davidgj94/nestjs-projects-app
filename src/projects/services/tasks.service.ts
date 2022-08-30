@@ -21,7 +21,7 @@ export class TasksService {
     private projectService: ProjectsService,
   ) {}
 
-  async userIsProjectMemberOrThrow(projectId: string, userId: sring) {
+  async userIsProjectMemberOrThrow(projectId: string, userId: string) {
     const project = await this.projectService.findByIdOrThrow(projectId);
     if (!project.participantsIds.includes(userId))
       throw new ForbiddenAccessException(userId);
