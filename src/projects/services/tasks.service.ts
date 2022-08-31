@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ForbiddenAccessException } from 'src/auth/exceptions/forbiden-access.exception';
+import { ForbiddenActionException } from 'src/auth/exceptions/forbiden-action.exception';
 import { PageMetaDto } from 'src/common/dtos/page-meta.dto';
 import { PageDto } from 'src/common/dtos/page.dto';
 import { UsersService } from 'src/users/users.service';
@@ -23,8 +23,13 @@ export class TasksService {
 
   async userIsProjectMemberOrThrow(projectId: string, userId: string) {
     const project = await this.projectService.findByIdOrThrow(projectId);
-    if (!project.participantsIds.includes(userId))
-      throw new ForbiddenAccessException(userId);
+    if (
+      !(
+        project.participantsIds.includes(userId) ||
+        project.createdById === userId
+      )
+    )
+      throw new ForbiddenActionException(userId);
   }
 
   async create(
@@ -48,11 +53,10 @@ export class TasksService {
 
     const pageQueryParams = pageOptionsDto.query;
     if (pageQueryParams)
-      Object.keys(pageQueryParams).forEach((key) => {
-        queryBuilder = queryBuilder.where(`entity.${key} = :${key}`, {
-          [key]: pageQueryParams[key],
-        });
-      });
+      queryBuilder = queryBuilder.where(
+        `entity.projectId = :projectId`,
+        pageQueryParams,
+      );
 
     queryBuilder
       .orderBy('entity.createdAt', pageOptionsDto.order)

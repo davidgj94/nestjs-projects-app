@@ -10,6 +10,7 @@ export enum Configs {
 
 export const isTestEnv = process.env.NODE_ENV === 'test';
 export const isDevEnv = process.env.NODE_ENV === 'dev';
+console.log(process.env.NODE_ENV);
 
 export const databaseConfig = registerAs(
   Configs.database,
@@ -25,16 +26,15 @@ export const databaseConfig = registerAs(
           entities: [__dirname + '/../**/*.entity.{ts,js}'],
           migrations: [__dirname + '/../migrations/*.{ts,js}'],
           synchronize: isDevEnv,
-          migrationsRun: isDevEnv,
-          dropSchema: isDevEnv,
+          migrationsRun: false,
           logging: true,
           subscribers: [__dirname + '/../**/*.subscriber.{ts,js}'],
         }
       : {
           type: 'sqlite',
           database: ':memory:',
-          dropSchema: true,
           synchronize: true,
+          migrationsRun: false,
           entities: [__dirname + '/../**/*.entity.{ts,js}'],
           subscribers: [__dirname + '/../**/*.subscriber.{ts,js}'],
         },
