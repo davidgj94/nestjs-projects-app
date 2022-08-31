@@ -26,7 +26,7 @@ $ yarn start:prod
 ## Test
 
 ```bash
-# unit tests
+# integration tests
 $ yarn test
 
 ```
