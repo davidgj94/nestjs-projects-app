@@ -1,9 +1,8 @@
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { Configs } from './config';
 import { useGlobals } from './app.helpers';
+import { AppConfigService } from './config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,7 +19,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   useGlobals(app);
-  const serverConfig = app.get(ConfigService).get(Configs.server);
+  const serverConfig = app.get(AppConfigService).serverConfig;
   console.log(`Listening at ${serverConfig.port}`);
   await app.listen(serverConfig.port);
 }

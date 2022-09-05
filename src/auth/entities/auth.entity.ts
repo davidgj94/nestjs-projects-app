@@ -1,5 +1,5 @@
 import { AbstractEntity } from 'src/common/entities';
-import { isTestEnv } from 'src/config';
+import { isTestEnv } from 'src/config/constants/environment';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { Column, Entity, OneToOne } from 'typeorm';
 import { Roles } from '../types/roles.type';

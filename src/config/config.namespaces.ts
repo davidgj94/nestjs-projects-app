@@ -1,18 +1,15 @@
 import { registerAs } from '@nestjs/config';
 import { DataSourceOptions } from 'typeorm';
 import { JwtModuleOptions } from '@nestjs/jwt';
+import { isDevEnv, isTestEnv } from './constants/environment';
 
-export enum Configs {
+enum Configs {
   database = 'database',
   server = 'server',
   jwt = 'jwt',
 }
 
-export const isTestEnv = process.env.NODE_ENV === 'test';
-export const isDevEnv = process.env.NODE_ENV === 'dev';
-console.log(process.env.NODE_ENV);
-
-export const databaseConfig = registerAs(
+export const databaseConfiguration = registerAs(
   Configs.database,
   (): DataSourceOptions =>
     !isTestEnv
@@ -40,11 +37,11 @@ export const databaseConfig = registerAs(
         },
 );
 
-export const serverConfig = registerAs(Configs.server, () => ({
+export const serverConfiguration = registerAs(Configs.server, () => ({
   port: parseInt(process.env.SERVER_PORT || '', 10) || 8000,
 }));
 
-export const jwtConfig = registerAs(
+export const jwtConfiguration = registerAs(
   Configs.jwt,
   (): JwtModuleOptions =>
     !isTestEnv

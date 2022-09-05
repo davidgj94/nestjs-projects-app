@@ -6,18 +6,19 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AuthenticationEntity } from './entities';
-import { ConfigService } from '@nestjs/config';
-import { Configs } from 'src/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { AppConfigModule } from 'src/config/config.module';
+import { AppConfigService } from 'src/config/config.service';
 
 @Module({
   imports: [
+    AppConfigModule,
     TypeOrmModule.forFeature([AuthenticationEntity]),
     PassportModule,
     JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        ...configService.get(Configs.jwt),
+      inject: [AppConfigService],
+      useFactory: (configService: AppConfigService) => ({
+        ...configService.jwtConfig,
       }),
     }),
   ],
