@@ -6,6 +6,7 @@ import { PageDto } from 'src/common/dtos/page.dto';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateProjectDto } from '../dto/create-project.dto';
+import { ProjectDto } from '../dto/project.dto';
 import { UpdateProjectDto } from '../dto/update-project.dto';
 import { ProjectEntity } from '../entities/project.entity';
 import { ProjectNotFoundException } from '../exception/project-not-found.exception';
@@ -53,7 +54,7 @@ export class ProjectsService {
 
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
-    return new PageDto(entities, pageMetaDto);
+    return new PageDto(entities.map(ProjectDto.fromEntity), pageMetaDto);
   }
 
   async findByIdOrThrow(projectId: string): Promise<ProjectEntity> {

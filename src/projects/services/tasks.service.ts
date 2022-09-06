@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateTaskDto } from '../dto/create-task.dto';
 import { TaskPageOptionsDto } from '../dto/page-options-task.dto';
+import { TaskDto } from '../dto/task.dto';
 import { UpdateTaskDto } from '../dto/update-task.dto';
 import { TaskEntity } from '../entities/task.entity';
 import { TaskNotFoundException } from '../exception/task-not-found.exception';
@@ -68,7 +69,7 @@ export class TasksService {
 
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
-    return new PageDto(entities, pageMetaDto);
+    return new PageDto(entities.map(TaskDto.fromEntity), pageMetaDto);
   }
 
   async update(taskId: string, updateTaskDto: UpdateTaskDto, userId: string) {
