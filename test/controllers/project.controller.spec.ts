@@ -1,19 +1,16 @@
 import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import * as faker from 'faker';
-import { AppModule } from 'src/app.module';
 import { JwtUser } from 'src/auth/types';
-import { useGlobals } from 'src/app.helpers';
 import { ProjectsService } from 'src/projects/services/projects.service';
 import { ProjectEntity } from 'src/projects/entities/project.entity';
 import * as request from 'supertest';
-import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { PageDto } from 'src/common/dtos/page.dto';
 import { UpdateProjectDto } from 'src/projects/dto/update-project.dto';
 import { CreateProjectDto } from 'src/projects/dto/create-project.dto';
+import { ProjectsController } from 'src/projects/controllers/projects.controller';
+import { bootstrapControllerTest } from './utils';
 
 describe('Project Controller', () => {
   let app: INestApplication;
@@ -23,7 +20,7 @@ describe('Project Controller', () => {
   let userToken: string;
   let rootToken: string;
 
-  let projectEntityStub: ProjectEntity;
+  let projectEntityStub;
   const projectService = {
     create: async () => projectEntityStub,
     findAll: async (): Promise<PageDto<ProjectEntity>> => ({
@@ -54,18 +51,11 @@ describe('Project Controller', () => {
   };
 
   beforeAll(async () => {
-    const moduleRef: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    })
-      .overrideProvider(ProjectsService)
-      .useValue(projectService)
-      .compile();
+    app = await bootstrapControllerTest(ProjectsController, [
+      { provide: ProjectsService, useValue: projectService },
+    ]);
 
-    app = moduleRef.createNestApplication();
-    useGlobals(app);
-    await app.init();
-
-    jwtService = moduleRef.get(JwtService);
+    jwtService = app.get(JwtService);
     adminToken = await jwtService.signAsync({
       id: uuid(),
       role: 'ADMIN',
@@ -81,18 +71,14 @@ describe('Project Controller', () => {
       role: 'ROOT',
     } as JwtUser);
 
-    const projectRepository = moduleRef.get<Repository<ProjectEntity>>(
-      getRepositoryToken(ProjectEntity),
-    );
-
-    projectEntityStub = projectRepository.create({
+    projectEntityStub = {
       id: uuid(),
       createdAt: faker.date.past(),
       updatedAt: faker.date.recent(),
       createdById: uuid(),
       description: faker.lorem.paragraph(),
       name: faker.lorem.words(),
-    });
+    };
   });
 
   beforeAll(async () => {
