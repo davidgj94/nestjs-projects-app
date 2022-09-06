@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from 'src/common/decorators';
 import { AuthenticationService } from './auth.service';
@@ -14,6 +14,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @Public()
+  @HttpCode(200)
   async login(@User() userAuth: AuthenticationEntity) {
     return this.authService.login(userAuth);
   }
