@@ -24,8 +24,13 @@ export class TaskDto
 
   constructor(task: TaskEntity) {
     super(task);
-    const { name, description, createdBy, projectId } = task;
-    Object.assign(this, { name, description, createdBy, projectId });
+    const { name, description, createdById, projectId } = task;
+    Object.assign(this, {
+      name,
+      description,
+      createdById,
+      projectId,
+    } as TaskDto);
   }
 
   static fromEntity(task: TaskEntity) {
